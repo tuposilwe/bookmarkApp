@@ -6,12 +6,23 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <h1>💖 Hello World!</h1>
-    <button id="openModalBtn">Open Modal Window</button>
+    <header>
+      <button id="show-modal">+</button>
+      <input type="text" id="search" placeholder="Search" />
+    </header>
+
+    <main>
+      <p id="no-items">No Items</p>
+      <div id="items"></div>
+    </main>
+ 
+    <div id="modal">
+      <input type="text" id="url" placeholder="Enter URL" />
+      <button id="add-item">Add Item</button>
+      <button id="close-modal">Cancel</button>
+    </div>
+
+    <!-- <button id="openModalBtn">Open Modal Window</button> -->
   </body>
-  <script>
-    document.getElementById('openModalBtn').addEventListener('click', () => {
-      window.electronAPI.openModal();
-    });
-  </script>
+  <script src="./app.js"></script>
 </html>
