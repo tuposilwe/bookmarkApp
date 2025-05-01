@@ -24,6 +24,7 @@ const createWindow = () => {
     height: mainWindowState.height,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
     },
   });
 
@@ -31,7 +32,7 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, "index.html"));
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 };
 
 const createModalWindow = (parentWindow) => {
@@ -52,6 +53,21 @@ const createModalWindow = (parentWindow) => {
     modalWindow.show();
   });
 };
+
+ipcMain.on("modal-event", (event, data) => {
+  switch (data.type) {
+    case "show":
+      console.log("Modal opened");
+      break;
+    case "hide":
+      console.log("Modal closed");
+      break;
+    case "submit":
+        event.sender.send("new-item-success","New item from main process")
+      // console.log("URL submitted:", data.url);
+      break;
+  }
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
