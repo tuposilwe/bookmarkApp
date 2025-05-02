@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const path = require("node:path");
+const readItem = require("./readItem");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -62,8 +63,11 @@ ipcMain.on("modal-event", (event, data) => {
     case "hide":
       console.log("Modal closed");
       break;
-    case "submit":
-        event.sender.send("new-item-success","New item from main process")
+    case "submit": 
+      readItem(data.url, item => {
+        event.sender.send("new-item-success", item);
+      });
+      
       // console.log("URL submitted:", data.url);
       break;
   }
