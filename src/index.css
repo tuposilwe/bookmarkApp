@@ -17,6 +17,7 @@ button {
   cursor: pointer;
   transition: background 0.3s ease;
   padding: 10px 16px;
+
 }
 
 input {
@@ -24,6 +25,14 @@ input {
   border-radius: 5px;
   border: 1px solid silver;
   padding: 0 10px;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+input:focus {
+  border-color: dodgerblue;
+  border-width: 2px;
+  outline: none;
 }
 
 input::placeholder {
@@ -116,6 +125,14 @@ main {
   border-radius: 5px;
   width: 100%;
   box-sizing: border-box;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+#modal #url:focus {
+  border-color: dodgerblue;
+  border-width: 2px;
+  outline: none;
 }
 
 /* Modal Buttons */
