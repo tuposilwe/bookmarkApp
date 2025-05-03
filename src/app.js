@@ -60,3 +60,20 @@ itemUrl.addEventListener("keyup", (e) => {
     submitItem();
   }
 });
+
+
+// DOM reference
+const items = document.getElementById("items");
+
+// Add new item to DOM
+function addItems(item) {
+  const itemNode = document.createElement("div");
+  itemNode.setAttribute("class", "read-item");
+  itemNode.innerHTML = `<img src="${item.screenshot}"/><h2>${item.title}</h2>`;
+  items.appendChild(itemNode);
+}
+
+// Listen for new item event from preload
+window.addEventListener("new-item", (event) => {
+  addItems(event.detail);
+});

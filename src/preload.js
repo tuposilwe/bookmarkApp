@@ -4,7 +4,8 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 ipcRenderer.on("new-item-success", (e, newItem) => {
   if (newItem) {
-    console.log(newItem);
+    // Send to renderer script
+    window.dispatchEvent(new CustomEvent("new-item", { detail: newItem }));
   }
 });
 

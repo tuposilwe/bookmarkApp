@@ -3,14 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <title>Hello World!</title>
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; img-src 'self' https://place-hold.it"
-    />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data:;">
 
     <meta
       http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; img-src 'self' https://place-hold.it"
+      content="default-src 'self'; script-src 'self'; img-src 'self' *"
     />
 
     <link rel="stylesheet" href="index.css" />
@@ -25,10 +22,10 @@
       <p id="no-items">No Items</p>
       <div id="items"></div>
 
-      <div class="read-item">
+      <!-- <div class="read-item">
         <img src="https://place-hold.it/300x500" />
         <h2>Title of item added</h2>
-      </div>
+      </div> -->
     </main>
 
     <div id="modal">
