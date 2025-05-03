@@ -61,19 +61,40 @@ itemUrl.addEventListener("keyup", (e) => {
   }
 });
 
+// Track items in storage
+let storage = JSON.parse(localStorage.getItem("readit-items")) || [];
 
-// DOM reference
-const items = document.getElementById("items");
+// Save items to localStorage
+const save = () => {
+  localStorage.setItem("readit-items", JSON.stringify(storage));
+};
 
-// Add new item to DOM
+// Add item to DOM
 function addItems(item) {
+  const items = document.getElementById("items");
+
   const itemNode = document.createElement("div");
   itemNode.setAttribute("class", "read-item");
   itemNode.innerHTML = `<img src="${item.screenshot}"/><h2>${item.title}</h2>`;
+  
   items.appendChild(itemNode);
 }
 
 // Listen for new item event from preload
 window.addEventListener("new-item", (event) => {
-  addItems(event.detail);
+  const newItem = event.detail;
+
+  addItems(newItem);
+
+  // Optional: prevent duplicates
+  if (!storage.find(i => i.url === newItem.url)) {
+    storage.push(newItem);
+    save();
+  }
+ 
+});
+
+// Add items from storage when app loads
+storage.forEach(item => {
+   addItems(item)
 });
