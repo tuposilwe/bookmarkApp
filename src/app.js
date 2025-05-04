@@ -9,6 +9,17 @@ let showModal = document.getElementById("show-modal"),
   itemUrl = document.getElementById("url");
 search = document.getElementById("search");
 
+// Set item as selected
+const select = (e) => {
+  // Remove currently selected item class
+  document
+    .getElementsByClassName("read-item selected")[0]
+    .classList.remove("selected");
+
+  // Add to clicked item
+  e.currentTarget.classList.add("selected");
+};
+
 // Filter items with "search"
 search.addEventListener("keyup", (e) => {
   // Loop items
@@ -80,15 +91,41 @@ const save = () => {
   localStorage.setItem("readit-items", JSON.stringify(storage));
 };
 
+const openItem = () => {
+  // only if we have items (in case of menu open)
+  if(!storage.length) return;
+  
+  // Get selected item
+  let selectedItem =  document.getElementsByClassName("read-item selected")[0];
+
+  // Get item's url
+  let contentURL = selectedItem.dataset.url;
+ 
+  console.log("Opening item: ",contentURL);
+  
+}
+
 // Add item to DOM
 function addItems(item) {
   const items = document.getElementById("items");
 
   const itemNode = document.createElement("div");
   itemNode.setAttribute("class", "read-item");
+
+  itemNode.setAttribute("data-url",item.url)
   itemNode.innerHTML = `<img src="${item.screenshot}"/><h2>${item.title}</h2>`;
 
   items.appendChild(itemNode);
+
+  // Attach click handler to select
+  itemNode.addEventListener("click", select);
+
+  itemNode.addEventListener("dblclick",openItem)
+
+  // if this is the first item,select it
+  if (document.getElementsByClassName("read-item").length === 1) {
+    itemNode.classList.add("selected");
+  }
 }
 
 // Listen for new item event from preload
@@ -108,3 +145,26 @@ window.addEventListener("new-item", (event) => {
 storage.forEach((item) => {
   addItems(item);
 });
+
+// move to newly selected item
+const changeSelection = (direction) => {
+  let currentItem = document.getElementsByClassName("read-item selected")[0];
+
+  // Handle up/down
+  if (direction === "ArrowUp" && currentItem.previousSibling) {
+    currentItem.classList.remove("selected");
+    currentItem.previousSibling.classList.add("selected");
+  } else if (direction === "ArrowDown" && currentItem.nextSibling) {
+    currentItem.classList.remove("selected");
+    currentItem.nextSibling.classList.add("selected");
+  }
+};
+
+// Navigate item selection with up/down arrows
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+    changeSelection(e.key);
+  }
+});
+
+
