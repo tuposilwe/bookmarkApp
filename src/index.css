@@ -1,5 +1,6 @@
 /* Global Styles */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   font: caption;
@@ -17,7 +18,6 @@ button {
   cursor: pointer;
   transition: background 0.3s ease;
   padding: 10px 16px;
-
 }
 
 input {
@@ -80,7 +80,7 @@ main {
   display: flex;
   align-items: center;
   border-bottom: 2px solid lightgray;
-  background: #FAFAFA;
+  background: #fafafa;
   padding: 10px;
 }
 
@@ -161,6 +161,10 @@ main {
 
 /* Animation */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

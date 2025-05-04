@@ -7,6 +7,17 @@ let showModal = document.getElementById("show-modal"),
   modal = document.getElementById("modal"),
   addItem = document.getElementById("add-item"),
   itemUrl = document.getElementById("url");
+search = document.getElementById("search");
+
+// Filter items with "search"
+search.addEventListener("keyup", (e) => {
+  // Loop items
+  Array.from(document.getElementsByClassName("read-item")).forEach((item) => {
+    // Hide items that don't match search value
+    let hasMatch = item.innerText.toLowerCase().includes(search.value);
+    item.style.display = hasMatch ? "flex" : "none";
+  });
+});
 
 // Show modal
 showModal.addEventListener("click", () => {
@@ -76,7 +87,7 @@ function addItems(item) {
   const itemNode = document.createElement("div");
   itemNode.setAttribute("class", "read-item");
   itemNode.innerHTML = `<img src="${item.screenshot}"/><h2>${item.title}</h2>`;
-  
+
   items.appendChild(itemNode);
 }
 
@@ -87,14 +98,13 @@ window.addEventListener("new-item", (event) => {
   addItems(newItem);
 
   // Optional: prevent duplicates
-  if (!storage.find(i => i.url === newItem.url)) {
+  if (!storage.find((i) => i.url === newItem.url)) {
     storage.push(newItem);
     save();
   }
- 
 });
 
 // Add items from storage when app loads
-storage.forEach(item => {
-   addItems(item)
+storage.forEach((item) => {
+  addItems(item);
 });
