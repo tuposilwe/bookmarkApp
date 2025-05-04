@@ -26,6 +26,7 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
+      nodeIntegration: true,
     },
   });
 
@@ -55,6 +56,31 @@ const createModalWindow = (parentWindow) => {
   });
 };
 
+function createReadWindow(contentURL) {
+  const readWin = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    maxWidth: 2000,
+    maxHeight: 2000,
+    backgroundColor: "#dedede",
+    webPreferences: {
+      contextIsolation: true,
+      preload: path.join(__dirname, "preload.js"), // optional if using preload
+    },
+  });
+
+  readWin.loadURL(contentURL);
+
+  readWin.webContents.on("did-finish-load", () => {
+    readWin.webContents.executeJavaScript(`alert("Hello from items.js")`);
+  });
+}
+
+// Handle IPC from renderer
+ipcMain.on("open-read-window", (event, contentURL) => {
+  createReadWindow(contentURL);
+});
+
 ipcMain.on("modal-event", (event, data) => {
   switch (data.type) {
     case "show":
@@ -63,11 +89,11 @@ ipcMain.on("modal-event", (event, data) => {
     case "hide":
       console.log("Modal closed");
       break;
-    case "submit": 
-      readItem(data.url, item => {
+    case "submit":
+      readItem(data.url, (item) => {
         event.sender.send("new-item-success", item);
       });
-      
+
       // console.log("URL submitted:", data.url);
       break;
   }

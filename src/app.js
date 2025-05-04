@@ -93,17 +93,19 @@ const save = () => {
 
 const openItem = () => {
   // only if we have items (in case of menu open)
-  if(!storage.length) return;
-  
+  if (!storage.length) return;
+
   // Get selected item
-  let selectedItem =  document.getElementsByClassName("read-item selected")[0];
+  let selectedItem = document.getElementsByClassName("read-item selected")[0];
 
   // Get item's url
   let contentURL = selectedItem.dataset.url;
- 
-  console.log("Opening item: ",contentURL);
-  
-}
+
+  // Open item in proxy BrowserWindow
+  window.electronAPI.openReadWindow(contentURL);
+
+  console.log("Opening item: ", contentURL);
+};
 
 // Add item to DOM
 function addItems(item) {
@@ -112,7 +114,7 @@ function addItems(item) {
   const itemNode = document.createElement("div");
   itemNode.setAttribute("class", "read-item");
 
-  itemNode.setAttribute("data-url",item.url)
+  itemNode.setAttribute("data-url", item.url);
   itemNode.innerHTML = `<img src="${item.screenshot}"/><h2>${item.title}</h2>`;
 
   items.appendChild(itemNode);
@@ -120,7 +122,7 @@ function addItems(item) {
   // Attach click handler to select
   itemNode.addEventListener("click", select);
 
-  itemNode.addEventListener("dblclick",openItem)
+  itemNode.addEventListener("dblclick", openItem);
 
   // if this is the first item,select it
   if (document.getElementsByClassName("read-item").length === 1) {
@@ -166,5 +168,3 @@ document.addEventListener("keydown", (e) => {
     changeSelection(e.key);
   }
 });
-
-
