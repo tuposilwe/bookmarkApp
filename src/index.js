@@ -1,8 +1,42 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain,Menu, shell } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const path = require("node:path");
 const readItem = require("./readItem");
 const reader = require("./reader");
+
+
+// const template = []
+
+const menu = Menu.buildFromTemplate([
+  {
+    label: "Items",
+    submenu:[{
+      label: "Add New",
+      // click: window.addNewItem 
+    }]
+  },
+  {
+    role: "editMenu"
+  },
+  {
+    role:"windowMenu"
+  },
+  {
+    role: "help",
+    submenu:[
+       {
+        label: 'Learn More',
+        click: () => {shell.openExternal("https://www.electronjs.org/")}
+       }
+    ]
+  }
+])
+
+
+const isMac = process.platform === 'darwin' 
+
+Menu.setApplicationMenu(menu)
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {

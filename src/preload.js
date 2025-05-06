@@ -8,7 +8,7 @@ ipcRenderer.on("new-item-success", (e, newItem) => {
     window.dispatchEvent(new CustomEvent("new-item", { detail: newItem }));
   }
 });
-
+ 
 const renderer =  {
   // openModal: () => ipcRenderer.send('open-modal'),
   openModal: () => ipcRenderer.send("modal-event", { type: "show" }),

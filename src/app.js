@@ -10,6 +10,10 @@ let showModal = document.getElementById("show-modal"),
   search = document.getElementById("search"),
   items;
 
+
+// Open new item modal
+
+
 const getSelectedItem = () => {
   // Get selected node
   let currentItem = document.getElementsByClassName("read-item selected")[0];
