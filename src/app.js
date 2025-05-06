@@ -121,7 +121,7 @@ const openItem = () => {
   // Open item in proxy BrowserWindow
   window.electronAPI.openReadWindow(contentURL, selectedIndex);
 
-  console.log("Opening item: ", contentURL);
+  // console.log("Opening item: ", contentURL);
 };
 
 // Add item to DOM

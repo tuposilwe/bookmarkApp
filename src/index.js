@@ -9,9 +9,27 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-let mainWindow, mainWindowState;
-
+let mainWindow, mainWindowState,splash;
 const createWindow = () => {
+  // Create splash window
+  splash = new BrowserWindow({
+    width: 400,
+    height: 300,
+    frame: false,
+    alwaysOnTop: true,
+    transparent: true,
+    resizable: false, // prevent resizing
+    webPreferences: {
+      devTools: false // optional: hide dev tools
+    }
+  });
+  
+  splash.loadFile(
+    path.join(__dirname, "splash.html")
+
+  );
+
+
   // Load the previous state with fallback to defaults
   mainWindowState = windowStateKeeper({
     defaultWidth: 1000,
@@ -34,8 +52,15 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "index.html"));
 
+  // Wait for main window to be ready
+  mainWindow.once('ready-to-show', () => {
+    // Close splash and show main window
+    splash.destroy();
+    mainWindow.show();
+  });
+
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 };
 
 const createModalWindow = (parentWindow) => {
@@ -128,6 +153,8 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+
+
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
