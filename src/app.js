@@ -6,15 +6,30 @@ let showModal = document.getElementById("show-modal"),
   closeModal = document.getElementById("close-modal"),
   modal = document.getElementById("modal"),
   addItem = document.getElementById("add-item"),
-  itemUrl = document.getElementById("url");
-search = document.getElementById("search");
+  itemUrl = document.getElementById("url"),
+  search = document.getElementById("search"),
+  items;
+
+const getSelectedItem = () => {
+  // Get selected node
+  let currentItem = document.getElementsByClassName("read-item selected")[0];
+
+  // Get Item index
+  let itemIndex = 0;
+  let child = currentItem;
+  while ((child = child.previousSibling) != null) itemIndex++;
+
+  // Return selected item and index
+  return {
+    node: currentItem,
+    index: itemIndex,
+  };
+};
 
 // Set item as selected
 const select = (e) => {
   // Remove currently selected item class
-  document
-    .getElementsByClassName("read-item selected")[0]
-    .classList.remove("selected");
+  getSelectedItem().node.classList.remove("selected");
 
   // Add to clicked item
   e.currentTarget.classList.add("selected");
@@ -96,20 +111,22 @@ const openItem = () => {
   if (!storage.length) return;
 
   // Get selected item
-  let selectedItem = document.getElementsByClassName("read-item selected")[0];
+  let selectedItem = getSelectedItem().node;
+
+  let selectedIndex = getSelectedItem().index;
 
   // Get item's url
   let contentURL = selectedItem.dataset.url;
 
   // Open item in proxy BrowserWindow
-  window.electronAPI.openReadWindow(contentURL);
+  window.electronAPI.openReadWindow(contentURL, selectedIndex);
 
   console.log("Opening item: ", contentURL);
 };
 
 // Add item to DOM
 function addItems(item) {
-  const items = document.getElementById("items");
+  items = document.getElementById("items");
 
   const itemNode = document.createElement("div");
   itemNode.setAttribute("class", "read-item");
@@ -150,7 +167,7 @@ storage.forEach((item) => {
 
 // move to newly selected item
 const changeSelection = (direction) => {
-  let currentItem = document.getElementsByClassName("read-item selected")[0];
+  let currentItem = getSelectedItem().node;
 
   // Handle up/down
   if (direction === "ArrowUp" && currentItem.previousSibling) {
@@ -167,4 +184,32 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowUp" || e.key === "ArrowDown") {
     changeSelection(e.key);
   }
+});
+
+const deleteItem = (itemIndex) => {
+  // Remove item from DOM
+  items.removeChild(items.childNodes[itemIndex]);
+
+  // Remove from storage
+  storage.splice(itemIndex, 1);
+
+  // Persist
+  save();
+
+  // Select previos item or new first item if first was deleted
+  if (storage.length) {
+    // Get new selected item index
+    let newSelectedItemIndex = itemIndex === 0 ? 0 : itemIndex - 1;
+
+    // set item at new index as selected
+    document
+      .getElementsByClassName("read-item")
+      [newSelectedItemIndex].classList.add("selected");
+  }
+};
+
+window.electronAPI.onEvent("event-to-main", (e, data) => {
+  // document.getElementById("msg").innerText = `Received: ${data.message}`;
+  // console.log(data.itemIndex);
+  deleteItem(data.itemIndex);
 });

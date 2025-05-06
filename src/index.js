@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const path = require("node:path");
 const readItem = require("./readItem");
+const reader = require("./reader");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -56,8 +57,11 @@ const createModalWindow = (parentWindow) => {
   });
 };
 
-function createReadWindow(contentURL) {
+function createReadWindow(contentURL, index) {
   const readWin = new BrowserWindow({
+    parent: mainWindow,
+    modal: false,
+    show: true,
     width: 1200,
     height: 800,
     maxWidth: 2000,
@@ -72,13 +76,19 @@ function createReadWindow(contentURL) {
   readWin.loadURL(contentURL);
 
   readWin.webContents.on("did-finish-load", () => {
-    readWin.webContents.executeJavaScript(`alert("Hello from items.js")`);
+    readWin.webContents.executeJavaScript(reader.replace("{{ index }}", index));
   });
 }
 
+// Receive event from child and forward to main window renderer
+ipcMain.on("event-from-child", (event, data) => {
+  // You can send this to mainWindow's renderer
+  mainWindow.webContents.send("event-to-main", data);
+});
+
 // Handle IPC from renderer
-ipcMain.on("open-read-window", (event, contentURL) => {
-  createReadWindow(contentURL);
+ipcMain.on("open-read-window", (event, contentURL, index) => {
+  createReadWindow(contentURL, index);
 });
 
 ipcMain.on("modal-event", (event, data) => {

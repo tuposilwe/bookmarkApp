@@ -14,7 +14,9 @@ const renderer =  {
   openModal: () => ipcRenderer.send("modal-event", { type: "show" }),
   closeModal: () => ipcRenderer.send("modal-event", { type: "hide" }),
   submitUrl: (url) => ipcRenderer.send("modal-event", { type: "submit", url }),
-  openReadWindow: (url) => ipcRenderer.send('open-read-window', url)
+  openReadWindow: (url,index) => ipcRenderer.send('open-read-window', url,index),
+  sendToMain: (channel, data) => ipcRenderer.send(channel, data),
+  onEvent: (channel, callback) => ipcRenderer.on(channel, (event, ...args) => callback(event,...args))
 }
 
 contextBridge.exposeInMainWorld("electronAPI",renderer);
