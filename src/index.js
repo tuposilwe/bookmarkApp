@@ -1,9 +1,10 @@
-const { app, BrowserWindow, ipcMain,Menu, shell, nativeImage } = require("electron");
+const { app, BrowserWindow, ipcMain,Menu, shell, nativeImage, Tray } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const path = require("node:path");
 const readItem = require("./readItem");
 const reader = require("./reader");
 
+let mainWindow, mainWindowState,splash,tray;
 
 const iconEye = nativeImage.createFromPath(path.join(__dirname, 'eye.png'));
 const iconBook = nativeImage.createFromPath(path.join(__dirname, 'book.png'));
@@ -13,6 +14,28 @@ const iconBrowser = nativeImage.createFromPath(path.join(__dirname, 'globe.png')
 const iconSearch = nativeImage.createFromPath(path.join(__dirname, 'search.png'));
 const iconMain = nativeImage.createFromPath(path.join(__dirname, 'termometer.png'));
 
+
+const createTray = () => {
+
+  // console.log("My icon: ", icon.getSize());
+
+  tray = new Tray(iconMain);
+
+  const contextMenu = Menu.buildFromTemplate([
+    { label: "BookMark", type: "checkbox" },
+    { role: "quit" },
+  ]);
+  tray.setToolTip("Welcome to BookMark App");
+  tray.setContextMenu(contextMenu);
+
+  tray.on("click", (e) => {
+    if (e.shiftKey) {
+      app.quit();
+    } else {
+      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+    }
+  });
+};
 
 const menu = Menu.buildFromTemplate([
   {
@@ -81,6 +104,7 @@ const menu = Menu.buildFromTemplate([
   },
 ]);
 
+
 Menu.setApplicationMenu(menu);
 
 
@@ -94,7 +118,6 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-let mainWindow, mainWindowState,splash;
 const createWindow = () => {
   // Create splash window
   splash = new BrowserWindow({
@@ -226,6 +249,7 @@ ipcMain.on("modal-event", (event, data) => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
+  createTray();
   //Manage new window state
   mainWindowState.manage(mainWindow);
 
