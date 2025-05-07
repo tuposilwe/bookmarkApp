@@ -169,6 +169,21 @@ const createWindow = () => {
     mainWindow.show();
   });
 
+  let wc = mainWindow.webContents;
+
+  wc.on("context-menu", () => {
+    const template = [
+      { label: "Read Item" },
+       {label:"Delete Item"}
+      ];
+    const menu = Menu.buildFromTemplate(template);
+    menu.popup();
+  });
+
+  wc.on("unresponsive", () => {
+    wc.reload();
+  });
+
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
 };
