@@ -1,4 +1,6 @@
-const { BrowserWindow } = require("electron");
+const { BrowserWindow, Notification, nativeImage } = require("electron");
+const path = require("path");
+const iconBook = nativeImage.createFromPath(path.join(__dirname, "book.png"));
 
 let offscreenWindow;
 
@@ -16,7 +18,7 @@ module.exports = (url, callback) => {
   });
 
   // Load the URL
-  offscreenWindow.loadURL(url).catch(err => {
+  offscreenWindow.loadURL(url).catch((err) => {
     console.error("Failed to load URL:", err);
     offscreenWindow?.close();
     offscreenWindow = null;
@@ -33,9 +35,14 @@ module.exports = (url, callback) => {
       callback({
         title,
         screenshot,
-        url
+        url,
       });
 
+      new Notification({
+        title: "BookMark",
+        body: "URL Added successfully",
+        icon: iconBook,
+      }).show();
     } catch (err) {
       console.error("Error capturing page:", err);
     } finally {
