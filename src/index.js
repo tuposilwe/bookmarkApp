@@ -1,39 +1,90 @@
-const { app, BrowserWindow, ipcMain,Menu, shell } = require("electron");
+const { app, BrowserWindow, ipcMain,Menu, shell, nativeImage } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const path = require("node:path");
 const readItem = require("./readItem");
 const reader = require("./reader");
 
 
-// const template = []
+const iconEye = nativeImage.createFromPath(path.join(__dirname, 'eye.png'));
+const iconBook = nativeImage.createFromPath(path.join(__dirname, 'book.png'));
+const iconMagazine = nativeImage.createFromPath(path.join(__dirname, 'magazine.png'));
+const iconTrash = nativeImage.createFromPath(path.join(__dirname, 'trash.png'));
+const iconBrowser = nativeImage.createFromPath(path.join(__dirname, 'globe.png'));
+const iconSearch = nativeImage.createFromPath(path.join(__dirname, 'search.png'));
+const iconMain = nativeImage.createFromPath(path.join(__dirname, 'termometer.png'));
+
 
 const menu = Menu.buildFromTemplate([
   {
     label: "Items",
-    submenu:[{
-      label: "Add New",
-      // click: window.addNewItem 
-    }]
+    submenu: [
+      {
+        label: "Add New",
+        click: () => {
+          const focusedWindow = BrowserWindow.getFocusedWindow();
+          focusedWindow.webContents.send("open-add-modal");
+        },
+        accelerator: "CmdOrCtrl+O",
+        icon: iconMagazine
+      },
+      {
+        label: "Read Item",
+        accelerator: "CmdOrCtrl+Enter",
+        click: () => {
+          const focusedWindow = BrowserWindow.getFocusedWindow();
+          focusedWindow.webContents.send("openItem");
+        },
+        icon:iconEye
+      },
+      {
+        label: "Delete item",
+        accelerator: "CmdOrCtrl+Backspace",
+        click: () => {
+          const focusedWindow = BrowserWindow.getFocusedWindow();
+          focusedWindow.webContents.send("deleteItem");
+        },
+        icon: iconTrash
+      },
+      {
+        label: "Open in Browser",
+        accelerator: "CmdOrCtrl+Shift+O",
+        click: () => {
+          const focusedWindow = BrowserWindow.getFocusedWindow();
+          focusedWindow.webContents.send("openItemNative");
+        },
+        icon:iconBrowser
+      },{
+        label:"Search Items",
+        accelerator: "CmdOrCtrl+S",
+        click: () => {
+          const focusedWindow = BrowserWindow.getFocusedWindow();
+          focusedWindow.webContents.send("openSearch");
+        },
+        icon:iconSearch
+      }
+    ],
   },
   {
-    role: "editMenu"
+    role: "editMenu",
   },
   {
-    role:"windowMenu"
+    role: "windowMenu",
   },
   {
     role: "help",
-    submenu:[
-       {
-        label: 'Learn More',
-        click: () => {shell.openExternal("https://www.electronjs.org/")}
-       }
-    ]
-  }
-])
+    submenu: [
+      {
+        label: "Learn More",
+        click: () => shell.openExternal("https://www.udemy.com/"),
+      },
+    ],
+  },
+]);
+
+Menu.setApplicationMenu(menu);
 
 
-const isMac = process.platform === 'darwin' 
+// const isMac = process.platform === 'darwin' 
 
 Menu.setApplicationMenu(menu)
 
@@ -55,7 +106,8 @@ const createWindow = () => {
     resizable: false, // prevent resizing
     webPreferences: {
       devTools: false // optional: hide dev tools
-    }
+    },
+    icon: iconMain
   });
   
   splash.loadFile(
@@ -81,6 +133,7 @@ const createWindow = () => {
       contextIsolation: true,
       nodeIntegration: true,
     },
+    icon: iconMain
   });
 
   // and load the index.html of the app.

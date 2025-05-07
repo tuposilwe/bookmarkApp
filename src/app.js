@@ -11,9 +11,6 @@ let showModal = document.getElementById("show-modal"),
   items;
 
 
-// Open new item modal
-
-
 const getSelectedItem = () => {
   // Get selected node
   let currentItem = document.getElementsByClassName("read-item selected")[0];
@@ -125,7 +122,7 @@ const openItem = () => {
   // Open item in proxy BrowserWindow
   window.electronAPI.openReadWindow(contentURL, selectedIndex);
 
-  // console.log("Opening item: ", contentURL);
+  console.log("Opening item: ", contentURL);
 };
 
 // Add item to DOM
@@ -168,6 +165,7 @@ window.addEventListener("new-item", (event) => {
 storage.forEach((item) => {
   addItems(item);
 });
+
 
 // move to newly selected item
 const changeSelection = (direction) => {
@@ -216,4 +214,35 @@ window.electronAPI.onEvent("event-to-main", (e, data) => {
   // document.getElementById("msg").innerText = `Received: ${data.message}`;
   // console.log(data.itemIndex);
   deleteItem(data.itemIndex);
+  
 });
+
+window.electronAPI.openAddModal(() => {
+  showModal.click();
+});
+
+window.electronAPI.openItem(() => {
+  openItem();
+});
+
+
+window.electronAPI.deleteItem(() => {
+  let selected = getSelectedItem();
+  deleteItem(selected.index);
+});
+
+window.electronAPI.openItemNative(()=>{
+
+  // Only if we have items
+   if(!storage.length) return;
+
+   const selectedNode = getSelectedItem().node;
+   const url = selectedNode?.dataset?.url;
+
+   window.electronAPI.openExternal(url);
+
+})
+
+window.electronAPI.openSearch(()=>{
+  search.focus()
+})
